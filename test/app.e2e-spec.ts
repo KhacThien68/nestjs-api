@@ -32,7 +32,7 @@ describe('App e2e', () => {
 
   describe('Auth', () => {
     const dto: AuthDto = {
-      email: 'efpyi@example.com',
+      email: 'efpyi1@example.com',
       password: '123456',
     };
 
@@ -98,13 +98,26 @@ describe('App e2e', () => {
           .spec()
           .post('/auth/signin')
           .withBody(dto)
-          .expectStatus(200);
+          .expectStatus(200)
+          .stores('userAt', 'access_token');
       });
     });
   });
 
   describe('Users', () => {
-    describe('Get me', () => {});
+    describe('Get me', () => {
+      it('Should return current user', () => {
+        return pactum
+          .spec()
+          .get('/users/me')
+          .withHeaders({
+            Authorization: `Bearer $S{userAt}`,
+          })
+          .expectStatus(200)
+          .inspect();
+      });
+    });
+
     describe('Edit user', () => {});
   });
 
@@ -115,8 +128,8 @@ describe('App e2e', () => {
 
     describe('Get bookmark by ID', () => {});
 
-    describe('Edit bookmark', () => {});
+    describe('Edit bookmark by ID', () => {});
 
-    describe('Delete bookmark', () => {});
+    describe('Delete bookmark by ID', () => {});
   });
 });
